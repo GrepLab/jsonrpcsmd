@@ -7,7 +7,7 @@ This library make a reflection of the classes given and output a json using the 
 To start use this library just create an instance of the Smb class. This class is the core of the library. You only need work this Smb.
 The Smb class only need to know the url of the endpoint witch is where the calls will be sended. You can pass the url in the constructor or set later using the setTarget() method. But remember, you cannot generate the json map if the target is not setted. 
 
-    //You can start laki this:
+    //You can start like this:
     $smd = new \Greplab\Jsonrpcsmd\Smd('http://my-website/path/of/the/endpoint');
     
     //Or like that:
