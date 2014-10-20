@@ -1,0 +1,20 @@
+{
+    "name": "greplab/jsonrpcsmd",
+    "description": "Classes to build a map of the services available using the JSON-RPC SMD specification (http://www.simple-is-better.org/json-rpc/jsonrpc20-smd.html).",
+    "authors": [
+        {
+            "name": "Daniel Zegarra",
+            "email": "dzegarra@greplab.com",
+            "homepage": "http://danielzegarra.info"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Greplab\\Jsonrpcsmd\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
