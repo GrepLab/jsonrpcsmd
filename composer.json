@@ -1,6 +1,10 @@
 {
     "name": "greplab/jsonrpcsmd",
+    "type": "library",
     "description": "Classes to build a map of the services available using the JSON-RPC SMD specification (http://www.simple-is-better.org/json-rpc/jsonrpc20-smd.html).",
+    "homepage": "https://github.com/dzegarra/jsonrpcsmd",
+    "license": "MIT",
+    "keywords": ["json","rpc","json-rpc","jsonrpc","smd","service","mapping","description"],
     "authors": [
         {
             "name": "Daniel Zegarra",
