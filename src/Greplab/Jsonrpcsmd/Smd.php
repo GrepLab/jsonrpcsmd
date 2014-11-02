@@ -33,6 +33,13 @@ class Smd
     protected $target;
     
     protected $useCanonical = false;
+
+    /**
+     * Closure utilizado como validador de servicios.
+     * Se ejecutará este closure cada vez que se intente leer una clase. Si la función devuelve FALSE la clase no será leida.
+     * @var Function
+     */
+    public $service_validator;
     
     public function getTransport()
     {
@@ -100,7 +107,10 @@ class Smd
      */
     public function addClass($class)
     {
-        $this->services[] = new Smd\Service($this, $class);
+        $reflectedclass = Smd\Service::read($this, $class);
+        if ( $reflectedclass !== false ) {
+            $this->services[] = Smd\Service::read($this, $class);
+        }
         return $this;
     }
     

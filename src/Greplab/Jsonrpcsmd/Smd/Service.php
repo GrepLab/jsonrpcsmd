@@ -16,7 +16,7 @@ class Service
      * nombre del servicio y método o agrupando los métodos.
      * @var string
      */
-    protected $representation = self::PRESENTATION_PLAIN;
+    protected $presentation = self::PRESENTATION_PLAIN;
     
     /**
      * @var \Greplab\Jsonrpcsmd\Smd
@@ -26,26 +26,45 @@ class Service
     /**
      * @var \ReflectionClass
      */
-    protected $service;
+    protected $reflectedclass;
     
     /**
      * Lista de métodos del servicio
-     * @var array
+     * @var Method[]
      */
     protected $methods = array();
     
     /**
-     * Constructor.
-     * @param \Greplab\Jsonrpcsmd\Smd $smd
-     * @param mixed $class
+     * Lee el contenido de la clase y entrega el resultado del análisis.
+     * Devuelve FALSE si la clase entregada no es un servicio válido.
+     * @return Service
      */
-    public function __construct(\Greplab\Jsonrpcsmd\Smd $smd, $class)
+    static public function read(\Greplab\Jsonrpcsmd\Smd $smd, $classname) 
+    {
+        $reflectedclass = new \ReflectionClass($classname);
+
+        if ($smd->service_validator && is_callable($smd->service_validator)) {
+            if ( call_user_func_array($smd->service_validator, array($reflectedclass)) === false ) {
+                return false;
+            }
+        }
+
+        return new Service($smd, $reflectedclass);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param \Greplab\Jsonrpcsmd\Smd $smd
+     * @param \ReflectionClass $reflectedclass
+     */
+    public function __construct(\Greplab\Jsonrpcsmd\Smd $smd, \ReflectionClass $reflectedclass)
     {
         $this->smd = $smd;
-        $this->service = new \ReflectionClass($class);
+        $this->reflectedclass = $reflectedclass;
         
         //Recorriendo los métodos públicos de la clase
-        foreach ($this->service->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+        foreach ($reflectedclass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             
             $name = $method->getName();
             //Ignorar los métodos mágicos
@@ -71,7 +90,7 @@ class Service
      */
     public function getClassname()
     {
-        return $this->service->getName();
+        return $this->reflectedclass->getName();
     }
     
     /**
@@ -136,7 +155,7 @@ class Service
     
     public function toArray()
     {
-        $fn = 'toArray' . ucfirst($this->representation);
+        $fn = 'toArray' . ucfirst($this->presentation);
         if (!method_exists($this, $fn)) {
             throw new \Exception('No existe el método ' . $fn);
         }
