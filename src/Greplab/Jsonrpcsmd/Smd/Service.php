@@ -1,9 +1,12 @@
 <?php namespace Greplab\Jsonrpcsmd\Smd;
+use Greplab\Jsonrpcsmd\Smd;
 
 /**
- * Representa a un servicio remoto.
+ * Class in charge of reflect and build a map of one class.
+ * Each instance of this class represent a unique class reflected.
  * 
  * @author Daniel Zegarra <dzegarra@greplab.com>
+ * @package Greplab\Jsonrpcsmd\Smd
  */
 class Service  
 {
@@ -12,14 +15,15 @@ class Service
     const PRESENTATION_TREE = 'tree';
     
     /**
-     * El json de servicios puede armarse de dos formas. Mostrando repetidamente el 
-     * nombre del servicio y método o agrupando los métodos.
+     * The map can be presented of two modes:
+     *  - Showing the service name in each method
+     *  - Nesting the methods names inside a service parent.
      * @var string
      */
     protected $presentation = self::PRESENTATION_PLAIN;
     
     /**
-     * @var \Greplab\Jsonrpcsmd\Smd
+     * @var Smd
      */
     protected $smd;
     
@@ -29,17 +33,19 @@ class Service
     protected $reflectedclass;
     
     /**
-     * Lista de métodos del servicio
+     * List of methods of the service.
      * @var Method[]
      */
     protected $methods = array();
-    
+
     /**
-     * Lee el contenido de la clase y entrega el resultado del análisis.
-     * Devuelve FALSE si la clase entregada no es un servicio válido.
+     * Read the content of one class and return the result of the analysis.
+     * Return FALSE if the cass found is not a valid service.
+     * @param Smd $smd
+     * @param string $classname
      * @return Service
      */
-    static public function read(\Greplab\Jsonrpcsmd\Smd $smd, $classname) 
+    static public function read(Smd $smd, $classname)
     {
         $reflectedclass = new \ReflectionClass($classname);
 
@@ -54,20 +60,19 @@ class Service
 
     /**
      * Constructor.
-     * 
-     * @param \Greplab\Jsonrpcsmd\Smd $smd
+     * @param Smd $smd
      * @param \ReflectionClass $reflectedclass
      */
-    public function __construct(\Greplab\Jsonrpcsmd\Smd $smd, \ReflectionClass $reflectedclass)
+    public function __construct(Smd $smd, \ReflectionClass $reflectedclass)
     {
         $this->smd = $smd;
         $this->reflectedclass = $reflectedclass;
         
-        //Recorriendo los métodos públicos de la clase
+        // Walwing the public methods of this class
         foreach ($reflectedclass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             
             $name = $method->getName();
-            //Ignorar los métodos mágicos
+            // Ignore magic methods
             if ('__' == substr($name, 0, 2)) continue;
         
             $this->methods[] = new Method($smd, $this, $method);
@@ -75,8 +80,7 @@ class Service
     }
     
     /**
-     * Devuelve los métodos del servicio.
-     * 
+     * Return the method of the service.
      * @return Method[]
      */
     public function getMethods()
@@ -85,7 +89,7 @@ class Service
     }
     
     /**
-     * Entrega el nombre de la clase.
+     * Return the name of the reflected class.
      * @return string
      */
     public function getClassname()
@@ -94,7 +98,7 @@ class Service
     }
     
     /**
-     * Entrega el nombre de la clase reemplazando los separadores de paquetes por puntos.
+     * Return the name of the class replacing the package separators by dots.
      * @return string
      */
     public function getDottedClassname()
@@ -103,8 +107,7 @@ class Service
     }
     
     /**
-     * Entrega una representación plana de los m�todos de la clase.
-     * 
+     * Return a plain representation of the class methods.
      * @return array
      */
     protected function toArrayPlain()
@@ -119,9 +122,8 @@ class Service
     }
     
     /**
-     * 
-     * @param unknown $classname
-     * @return multitype:
+     * This method is still in development.
+     * @todo implement the method toArrayTree()
      */
     protected function buildLevel($classname)
     {
@@ -137,8 +139,8 @@ class Service
     }
     
     /**
-     * Entrega una representación de arbol de los métodos de la clase.
-     *
+     * Return a tree representation of the methods of the reflected class.
+     * @todo This method is still in development.
      * @return array
      */
     protected function toArrayTree()
@@ -152,21 +154,34 @@ class Service
         
         return $this->methods;
     }
-    
+
+    /**
+     * Build and return the class representation as an array.
+     * @return array
+     * @throws \Exception If the current representation mode cannot be used
+     */
     public function toArray()
     {
         $fn = 'toArray' . ucfirst($this->presentation);
         if (!method_exists($this, $fn)) {
-            throw new \Exception('No existe el método ' . $fn);
+            throw new \Exception('There is no method ' . $fn . '.');
         }
         return $this->$fn();
     }
-    
+
+    /**
+     * Return this class representation as a json string.
+     * @return string
+     */
     public function toJson()
     {
         return json_encode($this->toArray());
     }
-    
+
+    /**
+     * Return this class representation as a json string.
+     * @return string
+     */
     public function __toString()
     {
         return $this->toJson();

@@ -1,9 +1,10 @@
 <?php namespace Greplab\Jsonrpcsmd;
 
 /**
- * Esta clase es la encargada de inventariar y crear el mapa de servicios y métodos.
- * 
+ * Class in charge of manager and build the map of services ans methods.
+ *
  * @author Daniel Zegarra <dzegarra@greplab.com>
+ * @package Greplab\Jsonrpcsmd
  */
 class Smd
 {
@@ -11,33 +12,40 @@ class Smd
     const ENV_JSONRPC_1 = 'JSON-RPC-1.0';
     
     /**
-     * Lista de servicios a mapear
+     * List od services to map.
      */
     protected $services = array();
     
     /**
-     * Medio de transporte por defecto
+     * Transport method by default
      */
     protected $transport = 'POST';
     
     /**
-     * Tipo de contenido que debe especificarse en la cabecera de las llamadas
+     * Type of content how has to be specified in the header.
      */
     protected $contentType = 'application/json';
     
     /**
-     * Versión del estandar JSON-RPC que debe usarse en las llamadas
+     * Standard version of JSON-RPC used in the calls.
      */
     protected $envelope = self::ENV_JSONRPC_2;
-    
+
+    /**
+     * The URL for the remote calls.
+     * @var string
+     */
     protected $target;
-    
+
+    /**
+     * Use a different url for each method using the service and method names.
+     * @var bool
+     */
     protected $useCanonical = false;
 
     /**
-     * Closure utilizado como validador de servicios.
-     * Se ejecutará este closure cada vez que se intente leer una clase. Si la función devuelve FALSE la clase no será leida.
-     * @var Function
+     * Closure used as service validator.
+     * This closure will be executed for each attempt to reflect a class. Is the function return FALSE the class will not be considered.
      */
     public $service_validator;
     
@@ -87,11 +95,8 @@ class Smd
     }
     
     /**
-     * Constructor
-     *
-     * Setup server description
+     * Constructor.
      * @param string $target
-     * @param boolean $useCanonical
      */
     public function __construct($target=null)
     {
@@ -101,7 +106,7 @@ class Smd
     }
     
     /**
-     * Agrega una clase a la lista de clases accesibles externamente.
+     * Add a class to the list of accessible classes externally.
      * @param string $class
      * @return \Greplab\Jsonrpcsmd\Smd
      */
@@ -113,39 +118,52 @@ class Smd
         }
         return $this;
     }
-    
+
     /**
-     * Devuelve el mapa de servicios.
+     * Return the service map as an associative array.
+     * @throws \Exception Is the target is not defined yet
      * @return array
      */
     public function toArray()
     {
         $target = $this->getTarget();
-        if (empty($target)) {
-            throw new \Exception('The target is not defined');
-        }
-        $services = [];
+        if (empty($target)) throw new \Exception('The target is not defined');
+
+        $map = [];
         foreach ($this->services as $service) {
-            $services = array_merge($services, $service->toArray());
+            $map = array_merge($map, $service->toArray());
         }
+        return $this->formatRespond($map);
+    }
+
+    /**
+     * Format the response including the map.
+     * @param array $map
+     * @return array
+     */
+    protected function formatRespond($map) {
         return array(
             'transport' => $this->getTransport(),
             'envelope' => $this->getEnvelope(),
             'contentType' => $this->getContentType(),
-            'serviceUrl' => $target,
-            'methods' => $services
+            'serviceUrl' => $this->getTarget(),
+            'methods' => $map
         );
     }
 
     /**
-     * Devuelve el mapa de servicios como una cadena JSON.
+     * Return the map of services as a json string.
      * @return string
      */
     public function toJson()
     {
         return json_encode($this->toArray());
     }
-    
+
+    /**
+     * Return the map of services as a json string.
+     * @return string
+     */
     public function __toString()
     {
         return $this->toJson();

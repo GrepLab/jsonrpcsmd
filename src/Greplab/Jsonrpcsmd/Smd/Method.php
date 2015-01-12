@@ -1,10 +1,17 @@
 <?php
 namespace Greplab\Jsonrpcsmd\Smd;
+use Greplab\Jsonrpcsmd\Smd;
 
+/**
+ * Class to analyze the shape of a method of one service.
+ *
+ * @author Daniel Zegarra <dzegarra@greplab.com>
+ * @package Greplab\Jsonrpcsmd\Smd
+ */
 class Method
 {
     /**
-     * @var \Greplab\Jsonrpcsmd\Smd
+     * @var Smd
      */
     protected $smd;
     
@@ -30,11 +37,11 @@ class Method
     
     /**
      * Constructor.
-     * @param \Greplab\Jsonrpcsmd\Smd $smd
+     * @param Smd $smd
      * @param \Greplab\Jsonrpcsmd\Smd\Service $class
      * @param \ReflectionMethod $method
      */
-    public function __construct(\Greplab\Jsonrpcsmd\Smd $smd, Service $class, \ReflectionMethod $method)
+    public function __construct(Smd $smd, Service $class, \ReflectionMethod $method)
     {
         $this->smd = $smd;
         $this->service = $class;
@@ -42,14 +49,14 @@ class Method
         
         $this->use_canonical = $smd->getUseCanonical();
         
-        //Recorriendo los par�metros
+        //Walking the parameters of the method
         foreach ($method->getParameters() as $param) {
             $this->params[] = new Parameter($param, $this, $class);
         }
     }
     
     /**
-     * Entrega el nombre del m�todo.
+     * Return the name of the method.
      * @return string
      */
     public function getName()
@@ -58,14 +65,18 @@ class Method
     }
     
     /**
-     * Devuelve los par�metros del m�todo.
+     * Return the params of the method.
      * @return Parameter[]
      */
     public function getParams()
     {
         return $this->params;
     }
-    
+
+    /**
+     * Return un array description of the method.
+     * @return array
+     */
     public function toArray() {
         $params = array();
         foreach ($this->getParams() as $param) {
@@ -82,12 +93,20 @@ class Method
         }
         return $m;
     }
-    
+
+    /**
+     * Return the method description as an json string.
+     * @return string
+     */
     public function toJson()
     {
         return json_encode($this->toArray());
     }
-    
+
+    /**
+     * Return the method description as an json string.
+     * @return string
+     */
     public function __toString()
     {
         return $this->toJson();
