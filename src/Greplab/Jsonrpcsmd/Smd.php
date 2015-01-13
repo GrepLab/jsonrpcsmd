@@ -8,7 +8,7 @@
  */
 class Smd
 {
-    const ENV_JSONRPC_2 = 'JSON-RPC-2.0';
+    const ENV_JSONRPC_2 = 'V2';
     const ENV_JSONRPC_1 = 'JSON-RPC-1.0';
     
     /**
@@ -22,7 +22,7 @@ class Smd
     protected $transport = 'POST';
     
     /**
-     * Type of content how has to be specified in the header.
+     * Type of content who has to be specified in the header.
      */
     protected $contentType = 'application/json';
     
@@ -142,13 +142,8 @@ class Smd
      * @return array
      */
     protected function formatRespond($map) {
-        return array(
-            'transport' => $this->getTransport(),
-            'envelope' => $this->getEnvelope(),
-            'contentType' => $this->getContentType(),
-            'serviceUrl' => $this->getTarget(),
-            'methods' => $map
-        );
+        $envelope = \App::make('Greplab\Jsonrpcsmd\Envelope\\' . $this->envelope);
+        return $envelope->build($map);
     }
 
     /**
