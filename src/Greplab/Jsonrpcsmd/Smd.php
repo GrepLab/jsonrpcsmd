@@ -1,7 +1,16 @@
 <?php namespace Greplab\Jsonrpcsmd;
 
 /**
- * Class in charge of manager and build the map of services ans methods.
+ * Class in charge of build the map of services and methods.
+ *
+ * To use this create a instance of {@link Smd}, add class names with {@link addClass} an finally use the methods {@link toArray} or {@link toJson} for get the map.
+ *
+ * I based in the specs publish in:
+ *  - http://www.simple-is-better.org/json-rpc/jsonrpc20-smd.html
+ *  - http://dojotoolkit.org/reference-guide/1.10/dojox/rpc/smd.html
+ *  - And the source code of http://framework.zend.com/manual/1.12/en/zend.json.server.html#zend.json.server.details.zendjsonserversmd
+ *
+ * Notice: This library just create and return the map of service. To respond the calls of remote methods you have to use other library or create the routes yourself.
  *
  * @author Daniel Zegarra <dzegarra@greplab.com>
  * @package Greplab\Jsonrpcsmd
