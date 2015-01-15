@@ -17,11 +17,9 @@
  */
 class Smd
 {
-    const ENV_JSONRPC_2 = 'V2';
-    const ENV_JSONRPC_1 = 'JSON-RPC-1.0';
     
     /**
-     * List od services to map.
+     * List of services to map.
      */
     protected $services = array();
     
@@ -37,8 +35,10 @@ class Smd
     
     /**
      * Standard version of JSON-RPC used in the calls.
+     * Use the name of the class used for construct the respond. The classes availables reside in the Envelope directory.
+     * You can create a new format and put in the Envelope directory. Don't forget of define the correct namespace.
      */
-    protected $envelope = self::ENV_JSONRPC_2;
+    protected $envelope = 'V2';
 
     /**
      * The URL for the remote calls.
@@ -55,6 +55,7 @@ class Smd
     /**
      * Closure used as service validator.
      * This closure will be executed for each attempt to reflect a class. Is the function return FALSE the class will not be considered.
+     * You can use this to implement a customized validator of services.
      */
     public $service_validator;
     
@@ -105,12 +106,16 @@ class Smd
     
     /**
      * Constructor.
-     * @param string $target
+     * @param string $target The URL target of the remote calls
+     * @param string $envelope
      */
-    public function __construct($target=null)
+    public function __construct($target=null, $envelope=null)
     {
         if (!is_null($target)) {
             $this->setTarget($target);
+        }
+        if (!is_null($envelope)) {
+            $this->setEnvelope($envelope);
         }
     }
     

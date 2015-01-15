@@ -8,20 +8,13 @@ use Greplab\Jsonrpcsmd\Smd;
  * @author Daniel Zegarra <dzegarra@greplab.com>
  * @package Greplab\Jsonrpcsmd\Envelope
  */
-class V2 implements Base {
-
-    protected $smd;
-
-    public function __constructor(Smd $smd)
-    {
-        $this->smd = $smd;
-    }
+class V2 extends Base {
 
     public function build(array $map)
     {
         return array(
+            'envelope' => 'JSON-RPC-2.0',
             'transport' => $this->smd->getTransport(),
-            'envelope' => $this->smd->getEnvelope(),
             'contentType' => $this->smd->getContentType(),
             'serviceUrl' => $this->smd->getTarget(),
             'methods' => $map
