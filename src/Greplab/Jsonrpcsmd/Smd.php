@@ -156,7 +156,7 @@ class Smd
      * @return array
      */
     protected function formatRespond($map) {
-        $envelope = \App::make('Greplab\Jsonrpcsmd\Envelope\\' . $this->envelope);
+        $envelope = \App::make('Greplab\Jsonrpcsmd\Envelope\\' . $this->envelope, array($this));
         return $envelope->build($map);
     }
 

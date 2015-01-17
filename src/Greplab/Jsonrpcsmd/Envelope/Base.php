@@ -17,7 +17,7 @@ abstract class Base {
      * Just receive the Smd instance.
      * @param Smd $smd
      */
-    public function __constructor(Smd $smd)
+    public function __construct(Smd $smd)
     {
         $this->smd = $smd;
     }
