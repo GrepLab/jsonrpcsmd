@@ -1,4 +1,5 @@
 <?php namespace Greplab\Jsonrpcsmd\Smd;
+
 use Greplab\Jsonrpcsmd\Smd;
 
 /**
@@ -41,6 +42,7 @@ class Service
     /**
      * Read the content of one class and return the result of the analysis.
      * Return FALSE if the cass found is not a valid service.
+     *
      * @param Smd $smd
      * @param string $classname
      * @return Service
@@ -60,6 +62,7 @@ class Service
 
     /**
      * Constructor.
+     *
      * @param Smd $smd
      * @param \ReflectionClass $reflectedclass
      */
@@ -81,6 +84,7 @@ class Service
     
     /**
      * Return the method of the service.
+     *
      * @return Method[]
      */
     public function getMethods()
@@ -90,6 +94,7 @@ class Service
     
     /**
      * Return the name of the reflected class.
+     *
      * @return string
      */
     public function getClassname()
@@ -99,6 +104,7 @@ class Service
     
     /**
      * Return the name of the class replacing the package separators by dots.
+     *
      * @return string
      */
     public function getDottedClassname()
@@ -108,6 +114,7 @@ class Service
     
     /**
      * Return a plain representation of the class methods.
+     *
      * @return array
      */
     protected function toArrayPlain()
@@ -123,7 +130,10 @@ class Service
     
     /**
      * This method is still in development.
+     *
      * @todo implement the method toArrayTree()
+     * @param string $classname
+     * @return string
      */
     protected function buildLevel($classname)
     {
@@ -140,6 +150,7 @@ class Service
     
     /**
      * Return a tree representation of the methods of the reflected class.
+     *
      * @todo This method is still in development.
      * @return array
      */
@@ -157,6 +168,7 @@ class Service
 
     /**
      * Build and return the class representation as an array.
+     *
      * @return array
      * @throws \Exception If the current representation mode cannot be used
      */
@@ -171,6 +183,7 @@ class Service
 
     /**
      * Return this class representation as a json string.
+     *
      * @return string
      */
     public function toJson()
@@ -180,6 +193,7 @@ class Service
 
     /**
      * Return this class representation as a json string.
+     *
      * @return string
      */
     public function __toString()

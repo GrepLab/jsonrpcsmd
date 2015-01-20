@@ -20,44 +20,58 @@ class Smd
     
     /**
      * List of services to map.
+     * @var Smd\Service[]
      */
     protected $services = array();
     
     /**
      * Transport method by default
+     * @var string
      */
     protected $transport = 'POST';
     
     /**
-     * Type of content who has to be specified in the header.
+     * Type of content who has to be specified in the header of the map.
+     * @var string
      */
     protected $contentType = 'application/json';
     
     /**
      * Standard version of JSON-RPC used in the calls.
-     * Use the name of the class used for construct the respond. The classes availables reside in the Envelope directory.
-     * You can create a new format and put in the Envelope directory. Don't forget of define the correct namespace.
+     * Use the name of the class used for construct the respond. The available classes reside in the "Envelope"
+     * subdirectory.
+     * You can create a new format and put in the "Envelope" subdirectory. Don't forget of define the correct namespace.
+     * @var string
      */
     protected $envelope = 'V2';
 
     /**
-     * The URL for the remote calls.
+     * The target URL for the remote calls.
      * @var string
      */
     protected $target;
 
     /**
-     * Use a different url for each method using the service and method names.
+     * Generate a different url for each method using the service and method names.
      * @var bool
      */
     protected $useCanonical = false;
 
     /**
      * Closure used as service validator.
-     * This closure will be executed for each attempt to reflect a class. Is the function return FALSE the class will not be considered.
+     * This closure will be executed for each attempt to reflect a class. Is the function return FALSE the class will
+     * not be ignored and don't be indexed.
      * You can use this to implement a customized validator of services.
+     * @var callable
      */
-    public $service_validator;
+    protected $service_validator;
+
+    /**
+     * Closure to generate the name of the service.
+     * @var callable
+     */
+    protected $name_resolver;
+
     
     public function getTransport()
     {
@@ -121,6 +135,9 @@ class Smd
     
     /**
      * Add a class to the list of accessible classes externally.
+     * If a {@link self::setServiceValidator() service validator} is defined, this will be executed before the class
+     * should be added.
+     *
      * @param string $class
      * @return \Greplab\Jsonrpcsmd\Smd
      */
@@ -177,5 +194,5 @@ class Smd
     {
         return $this->toJson();
     }
-    
+
 }
