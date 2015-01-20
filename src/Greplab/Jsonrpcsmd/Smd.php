@@ -185,7 +185,7 @@ class Smd
     {
         $reflectedclass = Smd\Service::read($this, $class);
         if ( $reflectedclass !== false ) {
-            $this->services[] = Smd\Service::read($this, $class);
+            $this->services[] = $reflectedclass;
         }
         return $this;
     }
