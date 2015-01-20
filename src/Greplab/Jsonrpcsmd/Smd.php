@@ -117,6 +117,46 @@ class Smd
     {
         $this->useCanonical = $value;
     }
+
+    /**
+     * Return the closure used as service validator.
+     *
+     * @return callable
+     */
+    public function getServiceValidator()
+    {
+        return $this->service_validator;
+    }
+
+    /**
+     * Closure used as service validator.
+     * This closure will be executed for each attempt to reflect a class. Is the function return FALSE the class will
+     * not be ignored and don't be indexed.
+     * You can use this to implement a customized validator of services.
+     * This closure receive only one argument: an instance of \ReflectionClass -
+     *
+     * @param callable $service_validator
+     */
+    public function setServiceValidator($service_validator)
+    {
+        $this->service_validator = $service_validator;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNameResolver()
+    {
+        return $this->name_resolver;
+    }
+
+    /**
+     * @param callable $name_resolver
+     */
+    public function setNameResolver($name_resolver)
+    {
+        $this->name_resolver = $name_resolver;
+    }
     
     /**
      * Constructor.

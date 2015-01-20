@@ -50,14 +50,25 @@ class Service
     static public function read(Smd $smd, $classname)
     {
         $reflectedclass = new \ReflectionClass($classname);
+        return self::isValid($smd, $reflectedclass) ? new Service($smd, $reflectedclass) : false;
+    }
 
-        if ($smd->service_validator && is_callable($smd->service_validator)) {
-            if ( call_user_func_array($smd->service_validator, array($reflectedclass)) === false ) {
+    /**
+     * Validate a class using the custom validation closure.
+     *
+     * @param Smd $smd
+     * @param \ReflectionClass $reflectedclass
+     * @return bool
+     */
+    static protected function isValid(Smd $smd, \ReflectionClass $reflectedclass)
+    {
+        $validator = $smd->getServiceValidator();
+        if ($validator && is_callable($validator)) {
+            if ( call_user_func_array($validator, [$reflectedclass]) === false ) {
                 return false;
             }
         }
-
-        return new Service($smd, $reflectedclass);
+        return true;
     }
 
     /**
@@ -111,6 +122,21 @@ class Service
     {
         return str_replace(['\\','_'], '.', $this->getClassname());
     }
+
+    /**
+     * Try to resolve the name of the service using the custom resolve closure. If a resolve function is not defined
+     * then the {@link self::getDottedClassname()} method is used.
+     *
+     * @return string
+     */
+    public function resolveClassname()
+    {
+        $resolver = $this->smd->getNameResolver();
+        if ( $resolver && is_callable($resolver) ) {
+            return call_user_func_array($resolver, [$this]);
+        }
+        return $this->getDottedClassname();
+    }
     
     /**
      * Return a plain representation of the class methods.
@@ -119,11 +145,11 @@ class Service
      */
     protected function toArrayPlain()
     {
-        $classname = $this->getDottedClassname();
+        $classname = $this->resolveClassname();
         $methods = array();
         foreach ($this->getMethods() as $method) {
-            $methodfullname = $classname . '.' . $method->getName();
-            $methods[$methodfullname] = $method->toArray();
+            $method_fullname = $classname . '.' . $method->getName();
+            $methods[$method_fullname] = $method->toArray();
         }
         return $methods;
     }
